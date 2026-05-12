@@ -60,6 +60,44 @@ public final class HelperClient: @unchecked Sendable {
         }
     }
 
+    public func flushDNSCache() async throws -> Bool {
+        try await withCheckedThrowingContinuation { continuation in
+            guard let proxy = connection?.remoteObjectProxyWithErrorHandler({ error in
+                continuation.resume(throwing: error)
+            }) as? HelperProtocol else {
+                continuation.resume(throwing: HelperClientError.notConnected)
+                return
+            }
+
+            proxy.flushDNSCache { success, errorMessage in
+                if success {
+                    continuation.resume(returning: true)
+                } else {
+                    continuation.resume(throwing: HelperClientError.operationFailed(errorMessage ?? "Unknown error"))
+                }
+            }
+        }
+    }
+
+    public func reindexSpotlight(volume: String) async throws -> Bool {
+        try await withCheckedThrowingContinuation { continuation in
+            guard let proxy = connection?.remoteObjectProxyWithErrorHandler({ error in
+                continuation.resume(throwing: error)
+            }) as? HelperProtocol else {
+                continuation.resume(throwing: HelperClientError.notConnected)
+                return
+            }
+
+            proxy.reindexSpotlight(volume: volume) { success, errorMessage in
+                if success {
+                    continuation.resume(returning: true)
+                } else {
+                    continuation.resume(throwing: HelperClientError.operationFailed(errorMessage ?? "Unknown error"))
+                }
+            }
+        }
+    }
+
     public func getHelperVersion() async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
             guard let proxy = connection?.remoteObjectProxyWithErrorHandler({ error in

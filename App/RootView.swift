@@ -127,6 +127,32 @@ struct RootView: View {
             MailAttachmentsView()
         case .timeMachine:
             TimeMachineView()
+        case .largeOldFiles:
+            LargeOldFilesView()
+        case .spaceLens:
+            SpaceLensView()
+        case .duplicateFinder:
+            DuplicateFinderView()
+        case .shredder:
+            ShredderView()
+        case .uninstaller:
+            UninstallerView()
+        case .photoLibrary:
+            PhotoLibraryView()
+        case .maintenance:
+            MaintenanceView()
+        case .batteryHealth:
+            BatteryHealthView()
+        case .extensions:
+            ExtensionsView()
+        case .updater:
+            UpdaterView()
+        case .optimization:
+            OptimizationView()
+        case .privacy:
+            PrivacyView()
+        case .systemMonitor:
+            SystemMonitorView()
         default:
             ModulePlaceholderView(category: category)
         }

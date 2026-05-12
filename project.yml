@@ -58,6 +58,13 @@ targets:
       - package: MPAI
       - package: MPHelperClient
       - target: MacPolishHelper
+    preBuildScripts:
+      - name: Generate Dev API Key
+        basedOnDependencyAnalysis: false
+        script: |
+          "${SRCROOT}/Tools/generate-dev-key.sh"
+        outputFiles:
+          - $(SRCROOT)/App/Generated/DevAPIKey.swift
     postCompileScripts:
       - name: Embed Helper Binary
         basedOnDependencyAnalysis: false

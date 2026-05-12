@@ -24,6 +24,8 @@ public enum ScanCategory: String, CaseIterable, Identifiable, Sendable {
 
     public var id: String { rawValue }
 
+    public var displayName: String { rawValue }
+
     public var group: ModuleGroup {
         switch self {
         case .systemJunk, .mailAttachments, .trashBins, .timeMachine:

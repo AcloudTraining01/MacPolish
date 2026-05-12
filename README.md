@@ -24,7 +24,13 @@ MacPolish scans your Mac, surfaces junk files, duplicates, large/old files, and 
 ## Building
 
 ```bash
-# Generate the Xcode project
+# First-time setup: copy the env template and add your OpenRouter key.
+# (.env is gitignored. Release builds never embed this key.)
+cp .env.example .env
+$EDITOR .env
+
+# Generate the dev-key Swift file from .env, then generate the Xcode project.
+Tools/generate-dev-key.sh
 xcodegen generate
 
 # Open in Xcode
@@ -33,6 +39,10 @@ open MacPolish.xcodeproj
 # Or build from command line
 xcodebuild -project MacPolish.xcodeproj -scheme MacPolish -configuration Debug build
 ```
+
+The build pre-script regenerates `App/Generated/DevAPIKey.swift` from `.env`
+on every build, so editing `.env` is enough — no manual rerun needed after
+the first setup.
 
 ## Project Structure
 
@@ -63,9 +73,15 @@ macOS will remember your choice for future launches.
 
 MacPolish requires Full Disk Access to scan system caches, logs, and other cleanup targets. The app will guide you through granting this permission on first launch.
 
-## AI Assistant (BYOK)
+## AI Assistant
 
-The AI Assistant uses OpenRouter (Bring Your Own Key). You pay OpenRouter directly for API usage. MacPolish never stores or transmits your billing information. Get a key at https://openrouter.ai/keys.
+The AI Assistant is powered by OpenRouter. Release builds ship with the
+developer's bundled key (provisioned at build time from a server-side
+proxy in the future); the AI is enabled automatically on first launch.
+
+For local development, set `OPENROUTER_API_KEY` in `.env` (see Building
+above). The key is embedded only in Debug builds; Release builds with
+no proxy configured fall back to a Bring Your Own Key flow in Settings.
 
 ## License
 

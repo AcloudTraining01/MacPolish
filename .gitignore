@@ -31,3 +31,8 @@ Packages/*/Package.resolved
 
 # Generated Xcode project (regenerate with xcodegen)
 MacPolish.xcodeproj
+
+# Secrets — local dev API key for the AI assistant.
+# Never commit. Release builds never read these.
+.env
+App/Generated/DevAPIKey.swift

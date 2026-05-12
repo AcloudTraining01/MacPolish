@@ -45,21 +45,41 @@ struct SettingsView: View {
 
     private var aiTab: some View {
         Form {
-            Section("OpenRouter API Key") {
-                HStack {
-                    if showKey {
-                        TextField("sk-or-...", text: $apiKey)
-                    } else {
-                        SecureField("sk-or-...", text: $apiKey)
-                    }
-                    Button(showKey ? "Hide" : "Show") {
-                        showKey.toggle()
+            if DevAPIKey.bundled != nil {
+                Section("OpenRouter API Key") {
+                    Label("Using bundled developer key (Debug build)", systemImage: "checkmark.seal.fill")
+                        .foregroundStyle(.green)
+                    Text("Release builds never ship this key. Override below if you want to use your own.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    HStack {
+                        if showKey {
+                            TextField("Override with your own key (optional)", text: $apiKey)
+                        } else {
+                            SecureField("Override with your own key (optional)", text: $apiKey)
+                        }
+                        Button(showKey ? "Hide" : "Show") {
+                            showKey.toggle()
+                        }
                     }
                 }
+            } else {
+                Section("OpenRouter API Key") {
+                    HStack {
+                        if showKey {
+                            TextField("sk-or-...", text: $apiKey)
+                        } else {
+                            SecureField("sk-or-...", text: $apiKey)
+                        }
+                        Button(showKey ? "Hide" : "Show") {
+                            showKey.toggle()
+                        }
+                    }
 
-                Link("Get an OpenRouter API key",
-                     destination: URL(string: "https://openrouter.ai/keys")!)
-                    .font(.caption)
+                    Link("Get an OpenRouter API key",
+                         destination: URL(string: "https://openrouter.ai/keys")!)
+                        .font(.caption)
+                }
             }
 
             Section("Model") {

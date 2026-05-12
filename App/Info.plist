@@ -26,5 +26,7 @@
     <string>Copyright 2025 MacPolish. All rights reserved.</string>
     <key>LSUIElement</key>
     <false/>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>MacPolish needs access to your Photos library to surface old screenshots that you may want to clean up. MacPolish never uploads or modifies your photos.</string>
 </dict>
 </plist>

@@ -23,16 +23,22 @@ public actor Quarantine {
             withIntermediateDirectories: true
         )
 
-        let manifest = QuarantineManifest(
-            timestamp: .now,
-            items: paths.map { .init(originalPath: $0.path, quarantinedName: $0.lastPathComponent) }
-        )
-
+        var items: [QuarantineManifest.QuarantinedItem] = []
         for path in paths {
-            let destination = batchDir.appendingPathComponent(path.lastPathComponent)
+            let base = path.lastPathComponent
+            var quarantinedName = base
+            var destination = batchDir.appendingPathComponent(quarantinedName)
+            var counter = 2
+            while FileManager.default.fileExists(atPath: destination.path) {
+                quarantinedName = "\(base)-\(counter)"
+                destination = batchDir.appendingPathComponent(quarantinedName)
+                counter += 1
+            }
             try FileManager.default.moveItem(at: path, to: destination)
+            items.append(.init(originalPath: path.path, quarantinedName: quarantinedName))
         }
 
+        let manifest = QuarantineManifest(timestamp: .now, items: items)
         let manifestData = try JSONEncoder().encode(manifest)
         try manifestData.write(to: batchDir.appendingPathComponent("manifest.json"))
 

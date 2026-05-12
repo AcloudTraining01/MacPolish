@@ -22,7 +22,12 @@ struct OnboardingView: View {
                     case 0: WelcomeStep(onNext: advance)
                     case 1: FDAStep(onNext: advance, onSkip: advance)
                     case 2: HelperStep(onNext: advance, onSkip: advance)
-                    case 3: AIKeyStep(apiKey: $apiKey, onNext: advance, onSkip: advance)
+                    case 3:
+                        if DevAPIKey.bundled != nil {
+                            Color.clear.onAppear(perform: advance)
+                        } else {
+                            AIKeyStep(apiKey: $apiKey, onNext: advance, onSkip: advance)
+                        }
                     case 4: ProfileStep(selectedProfile: $selectedProfile, onComplete: completeOnboarding)
                     default: EmptyView()
                     }
