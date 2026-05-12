@@ -1,0 +1,101 @@
+name: MacPolish
+options:
+  bundleIdPrefix: com.macpolish
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Manual
+    ARCHS: "$(ARCHS_STANDARD)"
+
+packages:
+  MPCore:
+    path: Packages/MPCore
+  MPUI:
+    path: Packages/MPUI
+  MPScanners:
+    path: Packages/MPScanners
+  MPAI:
+    path: Packages/MPAI
+  MPHelperClient:
+    path: Packages/MPHelperClient
+
+targets:
+  MacPolish:
+    type: application
+    platform: macOS
+    sources:
+      - path: App
+        excludes:
+          - "**/.DS_Store"
+      - path: HelperTool/com.macpolish.helper.plist
+        buildPhase:
+          copyFiles:
+            destination: wrapper
+            subpath: Contents/Library/LaunchDaemons
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.macpolish.app
+        PRODUCT_NAME: MacPolish
+        INFOPLIST_FILE: App/Info.plist
+        CODE_SIGN_ENTITLEMENTS: App/MacPolish.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+        COMBINE_HIDPI_IMAGES: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    dependencies:
+      - package: MPCore
+      - package: MPUI
+      - package: MPScanners
+      - package: MPAI
+      - package: MPHelperClient
+      - target: MacPolishHelper
+    postCompileScripts:
+      - name: Embed Helper Binary
+        basedOnDependencyAnalysis: false
+        script: |
+          HELPER_SRC="${BUILT_PRODUCTS_DIR}/com.macpolish.helper"
+          HELPER_DST="${TARGET_BUILD_DIR}/${WRAPPER_NAME}/Contents/Library/LaunchServices"
+          if [ ! -f "${HELPER_SRC}" ]; then
+            echo "warning: Helper binary not found at ${HELPER_SRC}, skipping embed"
+            exit 0
+          fi
+          mkdir -p "${HELPER_DST}"
+          cp -f "${HELPER_SRC}" "${HELPER_DST}/com.macpolish.helper"
+
+  MacPolishHelper:
+    type: tool
+    platform: macOS
+    sources:
+      - path: HelperTool
+        excludes:
+          - "**/.DS_Store"
+          - "**/*.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.macpolish.helper
+        PRODUCT_NAME: com.macpolish.helper
+        CODE_SIGN_ENTITLEMENTS: HelperTool/HelperTool.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        SKIP_INSTALL: NO
+    dependencies:
+      - package: MPCore
+
+schemes:
+  MacPolish:
+    build:
+      targets:
+        MacPolish: all
+        MacPolishHelper: all
+    run:
+      config: Debug
+    archive:
+      config: Release

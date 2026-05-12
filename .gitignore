@@ -1,0 +1,33 @@
+# Build artifacts
+build/
+DerivedData/
+*.xcarchive
+
+# Xcode
+*.xcuserdata
+*.xcworkspace
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+Packages/*/Package.resolved
+
+# IDE
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Generated Xcode project (regenerate with xcodegen)
+MacPolish.xcodeproj
